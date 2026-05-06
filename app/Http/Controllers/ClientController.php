@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -116,16 +117,88 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(Request $request, string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $row = Client::select('*')->where(CommonColsEnum::ID, $id)->first();
+            $email = $request['email'];
+
+            if (Client::where(ClientColsEnum::EMAIL, $email)->where(CommonColsEnum::ID, '!=', $id)->exists()) {
+                DB::rollBack();
+                return redirect()->route('clients.index')->with('error', "$email is already exist");
+            }
+
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $extension = $image->getClientOriginalExtension();
+                $uploadName   = time() . '_' . (string) Str::uuid() . "." . $extension;
+                $image->move(public_path('/uploads/media'), $uploadName);
+                $path = 'uploads/media/' . $uploadName;
+
+                if ($row['logo_path']) {
+                    $imagePath = public_path($row['logo_path']);
+                    if (File::exists($imagePath)) {
+                        File::delete($imagePath);
+                    }
+
+                    $row->update([
+                        ClientColsEnum::LOGO => $path,
+                        CommonColsEnum::UPDATED_AT => Carbon::now(),
+                        CommonColsEnum::UPDATED_BY => Auth::id()
+                    ]);
+                } else {
+                    $row->update([
+                        ClientColsEnum::LOGO => $path,
+                        CommonColsEnum::UPDATED_AT => Carbon::now(),
+                        CommonColsEnum::UPDATED_BY => Auth::id()
+                    ]);
+                }
+            }
+
+            $row->update([
+                ClientColsEnum::FIRST_NAME => $request['firstName'],
+                ClientColsEnum::LAST_NAME => $request['lastName'],
+                ClientColsEnum::EMAIL => $request['email'],
+                ClientColsEnum::PHONE => $request['phone'],
+                CommonColsEnum::UPDATED_BY => Auth::id(),
+                CommonColsEnum::UPDATED_AT => Carbon::now()
+            ]);
+
+            DB::commit();
+            return redirect()->route('clients.index')->with('success', $request['firstName'] . "'s record updated successfully");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->route('clients.index')->with('error', $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Client $client)
+    public function destroy(string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $row = Client::select('*')->where(CommonColsEnum::ID, $id)->first();
+
+            if ($row['logo_path']) {
+                $imagePath = public_path($row['logo_path']);
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+
+            $row->delete();
+
+            DB::commit();
+
+            return back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw new Exception($th);
+        }
     }
 }

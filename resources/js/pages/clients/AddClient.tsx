@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { router, usePage } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { forwardRef, useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod/v3';
 import { Button } from '@/components/ui/button';
@@ -21,11 +21,12 @@ import { Spinner } from '@/components/ui/spinner';
 import type { IClient } from '@/interface/client';
 
 interface IAddClient {
-    selectedRow?: IClient;
+    selectedRow?: IClient | null;
+    handleResetState?: () => void;
 }
 
 const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
-    ({ selectedRow }, ref) => {
+    ({ selectedRow, handleResetState }, ref) => {
         const [loading, setLoading] = useState(false);
         const [openDialog, setOpenDialog] = useState(false);
 
@@ -84,7 +85,7 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
         };
 
         function onSubmit(data: z.infer<typeof clientSchema>) {
-            console.log(data);
+            // console.log(data);
 
             const formData = new FormData();
             formData.append('firstName', data.firstName);
@@ -96,14 +97,31 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                 formData.append('image', file);
             }
 
-            router.post('clients', formData, {
-                onStart: () => {
-                    setLoading(true);
-                },
-                onFinish: () => {
-                    setLoading(false);
-                },
-            });
+            if (selectedRow?.id) {
+                // formData.append('method', '_PUT');
+
+                router.put(`clients/${selectedRow?.id}`, formData, {
+                    onStart: () => {
+                        setLoading(true);
+                    },
+                    onFinish: () => {
+                        setLoading(false);
+                    },
+                });
+            } else {
+                try {
+                    router.post('clients', formData, {
+                        onStart: () => {
+                            setLoading(true);
+                        },
+                        onFinish: () => {
+                            setLoading(false);
+                        },
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+            }
         }
 
         // console.log(flash);
@@ -121,6 +139,15 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
             }
         }, [flash]);
 
+        useEffect(() => {
+            reset({
+                firstName: selectedRow?.first_name ?? '',
+                lastName: selectedRow?.last_name ?? '',
+                email: selectedRow?.email ?? '',
+                phone: selectedRow?.phone_no ?? '',
+            });
+        }, [selectedRow]);
+
         return (
             <div className="-mt-5 mb-10">
                 <Dialog open={openDialog}>
@@ -137,10 +164,10 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                     <DialogContent className="sm:max-w-150">
                         <DialogHeader>
                             <DialogTitle>
-                                {`${selectedRow?.id ? 'Edit ' : ''} ${selectedRow?.id ? 'c' : 'C'}ountry`}
+                                {`${selectedRow?.id ? 'Edit ' : ''} ${selectedRow?.id ? 'c' : 'C'}lient`}
                             </DialogTitle>
                             <DialogDescription>
-                                {`${selectedRow?.id ? 'Edit' : 'Create'} country here. Click ${selectedRow?.id ? 'save changes' : 'submit'} when you're done.`}
+                                {`${selectedRow?.id ? 'Edit' : 'Create'} client here. Click ${selectedRow?.id ? 'save changes' : 'submit'} when you're done.`}
                             </DialogDescription>
                         </DialogHeader>
 
@@ -148,9 +175,7 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                             <div className="mb-4">
                                 <Input
                                     placeholder="First name"
-                                    // name="firstName"
                                     id="firstName"
-                                    // className="w-full py-2 pl-5 mb-5 rounded-lg bg-slate-900"
                                     {...register('firstName')}
                                 />
                                 {errors.firstName && (
@@ -163,9 +188,7 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                             <div className="mb-4">
                                 <Input
                                     placeholder="Last name"
-                                    // name="firstName"
                                     id="lastName"
-                                    // className="w-full py-2 pl-5 mb-5 rounded-lg bg-slate-900"
                                     {...register('lastName')}
                                 />
                                 {errors.lastName && (
@@ -178,9 +201,7 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                             <div className="mb-4">
                                 <Input
                                     placeholder="Email"
-                                    // name="firstName"
                                     id="email"
-                                    // className="w-full py-2 pl-5 mb-5 rounded-lg bg-slate-900"
                                     {...register('email')}
                                 />
                                 {errors.email && (
@@ -194,9 +215,7 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                                 <Input
                                     placeholder="Phone"
                                     type="number"
-                                    // name="firstName"
                                     id="phone"
-                                    // className="w-full py-2 pl-5 mb-5 rounded-lg bg-slate-900"
                                     {...register('phone')}
                                 />
                                 {errors.phone && (
@@ -213,14 +232,22 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                                 />
                             </div>
 
+                            {selectedRow?.logo_path && (
+                                <img
+                                    src={`/${selectedRow.logo_path}`}
+                                    alt={`${selectedRow.first_name}'s image`}
+                                />
+                            )}
+
                             <DialogFooter>
                                 <DialogClose asChild>
                                     <Button
                                         type="button"
+                                        className="cursor-pointer"
                                         onClick={() => {
                                             setOpenDialog(false);
-                                            // reset();
-                                            // resetState?.();
+                                            reset();
+                                            handleResetState?.();
                                         }}
                                         variant="outline"
                                     >
@@ -229,7 +256,7 @@ const AddClient = forwardRef<HTMLButtonElement, IAddClient>(
                                 </DialogClose>
                                 <Button
                                     type="submit"
-                                    className="bg-logoYellow hover:bg-logoYelloHover transition-all"
+                                    className="cursor-pointer"
                                 >
                                     {loading ? (
                                         <>
