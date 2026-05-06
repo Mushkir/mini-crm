@@ -4,7 +4,7 @@ A simple **Mini CRM (Customer Relationship Management)** application built using
 
 ---
 
-## 🚀 Features
+## Features
 
 - Manage client information (Create, Read, Update, Delete)
 - Responsive UI with React
@@ -14,7 +14,7 @@ A simple **Mini CRM (Customer Relationship Management)** application built using
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Backend:** Laravel
 - **Frontend:** React (Inertia.js)
@@ -23,7 +23,7 @@ A simple **Mini CRM (Customer Relationship Management)** application built using
 
 ---
 
-## 📦 Installation & Setup
+## nstallation & Setup
 
 Follow the steps below to set up the project locally.
 
@@ -102,7 +102,7 @@ You have **two options** to run the project:
 
 ---
 
-#### ✅ Option 1: Run Everything with One Command (Recommended)
+#### Option 1: Run Everything with One Command (Recommended)
 
 ```bash id="o1bq3n"
 composer run dev
@@ -112,7 +112,7 @@ composer run dev
 
 ---
 
-#### ⚙️ Option 2: Run Manually
+#### Option 2: Run Manually
 
 Start Laravel server:
 
@@ -136,7 +136,7 @@ pnpm run dev
 
 ---
 
-## 🌐 Access the Application
+## Access the Application
 
 ```id="3k8kqk"
 http://127.0.0.1:8000
@@ -144,7 +144,7 @@ http://127.0.0.1:8000
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```id="4c5l7n"
 app/
@@ -163,7 +163,7 @@ database/
 
 ---
 
-## ⚙️ Usage
+## Usage
 
 - Create new clients
 - View client list
@@ -172,7 +172,7 @@ database/
 
 ---
 
-## 🧪 Development Notes
+## Development Notes
 
 - Inertia.js removes the need for a separate API layer
 - Laravel handles validation and backend logic
@@ -180,14 +180,16 @@ database/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Feel free to fork and submit pull requests.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
 ---
+
+## Author
