@@ -24,6 +24,15 @@ class ClientSeeder extends Seeder
                 CommonColsEnum::IS_ACTIVE => 1,
                 CommonColsEnum::CREATED_BY => 1,
                 CommonColsEnum::UPDATED_BY => 1
+            ],
+            [
+                ClientColsEnum::FIRST_NAME => 'Musaakir',
+                ClientColsEnum::LAST_NAME => 'Mohamed',
+                ClientColsEnum::EMAIL => 'musaakir@gmail.com',
+                ClientColsEnum::PHONE => "0777195281",
+                CommonColsEnum::IS_ACTIVE => 1,
+                CommonColsEnum::CREATED_BY => 2,
+                CommonColsEnum::UPDATED_BY => 2
             ]
         ];
 
