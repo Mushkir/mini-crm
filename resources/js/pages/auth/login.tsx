@@ -45,6 +45,7 @@ export default function Login({
                                     tabIndex={1}
                                     autoComplete="email"
                                     placeholder="email@example.com"
+                                    value={'admin@gmail.com'}
                                 />
                                 <InputError message={errors.email} />
                             </div>
@@ -69,6 +70,7 @@ export default function Login({
                                     tabIndex={2}
                                     autoComplete="current-password"
                                     placeholder="Password"
+                                    value={'password'}
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -84,7 +86,7 @@ export default function Login({
 
                             <Button
                                 type="submit"
-                                className="mt-4 w-full"
+                                className="w-full mt-4"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -95,7 +97,7 @@ export default function Login({
                         </div>
 
                         {canRegister && (
-                            <div className="text-center text-sm text-muted-foreground">
+                            <div className="text-sm text-center text-muted-foreground">
                                 Don't have an account?{' '}
                                 <TextLink href={register()} tabIndex={5}>
                                     Sign up
@@ -107,7 +109,7 @@ export default function Login({
             </Form>
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-4 text-sm font-medium text-center text-green-600">
                     {status}
                 </div>
             )}
