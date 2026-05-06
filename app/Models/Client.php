@@ -11,6 +11,8 @@ class Client extends Model
     /** @use HasFactory<\Database\Factories\ClientFactory> */
     use HasFactory;
 
+    protected $guarded = [];
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, CommonColsEnum::CREATED_BY, CommonColsEnum::ID);

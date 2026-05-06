@@ -8,5 +8,5 @@ enum ClientColsEnum
     const LAST_NAME = 'last_name';
     const EMAIL = 'email';
     const PHONE = 'phone_no';
-    const LOGO = 'logo';
+    const LOGO = 'logo_path';
 }

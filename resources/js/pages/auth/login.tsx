@@ -45,7 +45,7 @@ export default function Login({
                                     tabIndex={1}
                                     autoComplete="email"
                                     placeholder="email@example.com"
-                                    value={'admin@gmail.com'}
+                                    value={'boss@gmail.com'}
                                 />
                                 <InputError message={errors.email} />
                             </div>
